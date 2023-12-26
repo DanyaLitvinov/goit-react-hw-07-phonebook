@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Form, Label } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { getContacts, setContact } from '../../redux/Contacts/ConactsSlice';
-import { nanoid } from '@reduxjs/toolkit';
+import { setContacts } from '../../redux/Contacts/ContactsSelectors';
+import { addContact } from '../../redux/Contacts/ContactsOperations';
+
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +11,7 @@ const ContactForm = () => {
     number: '',
   });
 
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(setContacts);
   const dispatch = useDispatch();
 
   const handleChange = event => {
@@ -21,13 +22,7 @@ const ContactForm = () => {
   const handleSubmit = event => {
     event.preventDefault();
 
-    const newContactTemplate = {
-      name: formData.name,
-      number: formData.number,
-      id: nanoid(),
-    };
-
-    const isInContacts = contacts.some(
+    const isInContacts = contacts?.some(
       ({ name }) => name.toLowerCase() === formData.name.toLowerCase()
     );
 
@@ -35,7 +30,7 @@ const ContactForm = () => {
       return alert(`${formData.name} is already in contacts`);
     }
 
-    dispatch(setContact(newContactTemplate));
+    dispatch(addContact(formData));
 
     setFormData({ name: '', number: '' });
   };
